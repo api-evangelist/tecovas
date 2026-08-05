@@ -1,0 +1,26 @@
+{
+  "$schema": "https://raw.githubusercontent.com/cloudflare/agent-skills-discovery-rfc/main/schema.json",
+  "skills": [
+    {
+      "name": "search-products",
+      "type": "skill",
+      "description": "Free-text search of the Tecovas catalog (boots, apparel, hats, accessories, gift cards), Algolia-backed.",
+      "url": "https://www.tecovas.com/.well-known/agent-skills/skills/search-products.md",
+      "sha256": "00b5e540ab0a0d094bad5653668da3a524c9ae9291db193ba6b013c57a0cbb26"
+    },
+    {
+      "name": "get-product-details",
+      "type": "skill",
+      "description": "Fetch full product detail (variants, sizes, media) by slug.",
+      "url": "https://www.tecovas.com/.well-known/agent-skills/skills/get-product-details.md",
+      "sha256": "cdbebaa64aa2437eb7f071e51e79dbbb2c4132106f37dff69d5a96128ea747fc"
+    },
+    {
+      "name": "find-store",
+      "type": "skill",
+      "description": "Find Tecovas retail stores by location.",
+      "url": "https://www.tecovas.com/.well-known/agent-skills/skills/find-store.md",
+      "sha256": "846c70f06c6365addeaef2b67a44c479fd044109743ec3fb6b7c634b9d844a76"
+    }
+  ]
+}

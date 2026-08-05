@@ -1,0 +1,44 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://www.tecovas.com/api/productdetail",
+      "service-doc": [
+        {
+          "href": "https://www.tecovas.com/llms.txt",
+          "type": "text/plain",
+          "title": "Full product detail by slug (/api/productdetail/:slug)"
+        }
+      ]
+    },
+    {
+      "anchor": "https://www.tecovas.com/api/collection",
+      "service-doc": [
+        {
+          "href": "https://www.tecovas.com/llms.txt",
+          "type": "text/plain",
+          "title": "Collection metadata, filter groups, and SEO by slug (?slug=) — does not return products"
+        }
+      ]
+    },
+    {
+      "anchor": "https://www.tecovas.com/api/collection-products",
+      "service-doc": [
+        {
+          "href": "https://www.tecovas.com/llms.txt",
+          "type": "text/plain",
+          "title": "Products in a collection (?slug=) or free-text search (?search=), Algolia-backed; optional ?limit= (1-48)"
+        }
+      ]
+    },
+    {
+      "anchor": "https://www.tecovas.com/api/search-settings",
+      "service-doc": [
+        {
+          "href": "https://www.tecovas.com/llms.txt",
+          "type": "text/plain",
+          "title": "Site-wide search settings, facets, and configuration"
+        }
+      ]
+    }
+  ]
+}

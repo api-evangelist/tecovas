@@ -1,0 +1,38 @@
+# Tecovas
+
+> Tecovas is a direct-to-consumer brand offering cowboy boots, work boots, and Western wear for men, women, and kids. Handmade with premium materials at honest prices; free shipping, returns, and exchanges.
+
+## Shop
+
+- [Shop All](https://www.tecovas.com/shop)
+- [New Arrivals](https://www.tecovas.com/shop?collection=new-arrivals)
+- [Men's Boots](https://www.tecovas.com/collections/mens-boots)
+- [Women's Boots](https://www.tecovas.com/collections/womens-boots)
+- [Men's Apparel](https://www.tecovas.com/collections/mens-apparel)
+- [Women's Apparel](https://www.tecovas.com/collections/womens-apparel)
+- [Accessories](https://www.tecovas.com/collections/accessories)
+- [Gift Cards](https://www.tecovas.com/products/gift-card)
+
+## Support & Info
+
+- [Fit Guide](https://www.tecovas.com/fit-guide)
+- [Product Care](https://www.tecovas.com/product-care)
+- [Help Center](https://www.tecovas.com/help-center)
+- [Stores](https://www.tecovas.com/stores)
+- [Returns](https://www.tecovas.com/returns)
+
+## Company
+
+- [Blog](https://www.tecovas.com/blog)
+- [Careers](https://www.tecovas.com/careers)
+
+## About
+
+Tecovas makes handcrafted Western boots and accessories from full-grain leathers, exotic skins, and genuine leather soles. All boots are crafted in Leon, Mexico by skilled artisans. The brand sells direct-to-consumer online and in retail stores across the United States, cutting out traditional markups to offer high-quality Western wear at accessible prices.
+
+## For AI Agents
+
+- [API Catalog](https://www.tecovas.com/.well-known/api-catalog)
+- [Agent Skills](https://www.tecovas.com/.well-known/agent-skills/index.json)
+- [Agent Instructions](https://www.tecovas.com/agents.md)
+- [Full Guide](https://www.tecovas.com/llms-full.txt)

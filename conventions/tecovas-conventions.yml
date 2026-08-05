@@ -1,0 +1,125 @@
+generated: '2026-08-05'
+method: searched
+source: https://www.tecovas.com/agents.md
+also_from:
+- https://checkout.tecovas.com/agents.md
+- https://www.tecovas.com/robots.txt
+- https://www.tecovas.com/.well-known/api-catalog
+note: >-
+  Cross-cutting semantics for the three Tecovas surfaces. Everything below is either documented
+  by Tecovas or observed on a live probe on 2026-08-05; nothing is assumed. No idempotency
+  contract exists on any surface, so no Idempotency pointer is claimed.
+surfaces:
+  storefront_json:
+    base: https://www.tecovas.com/api
+    auth: none
+    content_type: application/json
+    endpoints:
+    - path: /productdetail/:slug
+      method: GET
+      description: Full product detail by slug.
+      observed: 'GET /api/productdetail/the-earl -> 200, 308,856 bytes'
+      note: 'An unknown slug returns HTTP 500 with a short JSON body, not 404.'
+    - path: /collection?slug=/<slug>
+      method: GET
+      description: Collection metadata, filter groups and SEO. Does not return products.
+      observed: 'GET /api/collection?slug=/shop/boots/roper-boots -> 200 with a collection object'
+      note: >-
+        The slug must be a leading-slash route path. The example given in agents.md
+        (?slug=/mens-boots) returns {"collection":null,"seo":{}} with HTTP 200 — a miss is a
+        200 with a null collection, never a 404.
+    - path: /collection-products?slug=/<slug>|?search=<query>
+      method: GET
+      description: Products in a collection, or free-text search. Algolia-backed.
+      parameters: [slug, search, limit]
+      observed: 'GET /api/collection-products?search=roper&limit=2 -> 200, 3.0 MB, 27 products'
+      note: >-
+        limit is documented as 1-48 but limit=2 returned 27 products in the observed response;
+        treat limit as advisory.
+    - path: /search-settings
+      method: GET
+      description: Site-wide search settings, facets and configuration.
+      observed: 'GET /api/search-settings -> 200, 54,700 bytes'
+  storefront_graphql:
+    base: https://checkout.tecovas.com/api/2026-01/graphql.json
+    auth: none
+    introspection: open
+    versioning: dated API version in the path (2026-01)
+    cost_extension: 'Responses carry extensions.cost.requestedQueryCost (Shopify calculated query cost).'
+  ucp_mcp:
+    base: https://checkout.tecovas.com/api/ucp/mcp
+    protocol: MCP over JSON-RPC 2.0, HTTP POST
+    auth: 'meta.ucp-agent.profile URI required on every tool call; tools/list is anonymous'
+    errors: 'JSON-RPC error objects, e.g. code -32001 "UCP discovery failed" returned with HTTP 422'
+authentication: see authentication/tecovas-authentication.yml
+idempotency:
+  supported: false
+  evidence: >-
+    No idempotency key header, parameter or documented retry contract appears in agents.md, the
+    api-catalog, or any of the 13 MCP tool inputSchemas. The read surfaces are GET-only.
+pagination:
+  storefront_json:
+    style: none
+    evidence: >-
+      collection-products accepts only limit; no cursor, page or offset parameter is documented
+      or present in the observed response envelope.
+  graphql:
+    style: relay-cursor-connections
+    params: [first, last, after, before]
+    evidence: Standard Shopify Storefront connection types in graphql/tecovas-storefront.graphql.
+field_expansion:
+  supported: false
+  note: >-
+    The JSON endpoints return fixed shapes. GraphQL provides field selection natively; there is
+    no sparse-fieldset parameter on the REST surface.
+metadata:
+  graphql: metafields and metaobjects are queryable on the Storefront schema.
+  ucp: 'every MCP tool takes a required meta object carrying meta.ucp-agent.profile'
+request_tracing:
+  request_id_header: null
+  note: >-
+    No request-id/correlation header is documented. collection-products responses do carry an
+    Algolia queryID in the body, which is the only per-request identifier observed.
+versioning:
+  storefront_json: unversioned — no version segment or header
+  graphql: dated path version (/api/2026-01/graphql.json); publicApiVersions query field lists supported versions
+  ucp: 'dated protocol versions — current 2026-04-08, also supports 2026-01-23'
+error_envelope:
+  storefront_json:
+    format: plain JSON
+    problem_json: false
+    note: 'Misses are expressed as 200 with a null body field (collection) or as 500 (productdetail).'
+  ucp_mcp:
+    format: JSON-RPC 2.0 error object with data.code and data.continue_url
+rate_limiting:
+  documented: true
+  headers: null
+  policy: >-
+    checkout agents.md: "The MCP endpoint is rate-limited per IP. Back off on 429 responses."
+    www agents.md: "Respect rate limits. Honor Crawl-delay directives. Use ?limit= to cap
+    collection-products responses."
+  robots_crawl_delay: 'Crawl-delay: 1 declared for User-agent: Pinterest'
+agent_rules:
+  content_signal: 'search=yes, ai-input=yes, ai-train=yes (robots.txt, User-agent *)'
+  disallowed_for_agents: [/account, /admin, /cart, /carts, /checkout, /checkouts/, '/orders/*', /search/, '/status/*']
+  human_approval: >-
+    Checkout, payment and order placement must not be completed automatically. Both agents.md
+    documents require explicit, contemporaneous human approval before any payment is finalized,
+    and prohibit scripted form fills or browser automation that finalize payment.
+cross_links:
+  authentication: authentication/tecovas-authentication.yml
+  scopes: scopes/tecovas-scopes.yml
+  errors: errors/tecovas-problem-types.yml
+  lifecycle: lifecycle/tecovas-lifecycle.yml
+  conformance: conformance/tecovas-conformance.yml
+  mcp: mcp/tecovas-mcp.yml
+x-evidence:
+  fetched: '2026-08-05'
+  probes:
+  - {url: 'https://www.tecovas.com/api/search-settings', status: 200}
+  - {url: 'https://www.tecovas.com/api/collection-products?search=roper&limit=2', status: 200}
+  - {url: 'https://www.tecovas.com/api/collection?slug=/mens-boots', status: 200}
+  - {url: 'https://www.tecovas.com/api/collection?slug=/shop/boots/roper-boots', status: 200}
+  - {url: 'https://www.tecovas.com/api/productdetail/the-earl', status: 200}
+  - {url: 'https://www.tecovas.com/api/productdetail/mens-the-cartwright', status: 500}
+  - {url: 'https://www.tecovas.com/robots.txt', status: 200}

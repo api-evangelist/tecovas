@@ -1,0 +1,86 @@
+generated: '2026-08-05'
+method: searched
+source: https://www.tecovas.com/.well-known/api-catalog
+notes: >-
+  Two hosts carry a discovery surface. The storefront host (www.tecovas.com) publishes an
+  RFC 9727 api-catalog linkset and a Cloudflare-RFC agent-skills index. The Shopify-hosted
+  checkout host (checkout.tecovas.com) publishes the UCP merchant profile and the OAuth /
+  protected-resource discovery documents for Shopify customer accounts. A control probe
+  (/.well-known/CONTROL-BOGUS-12345) returned 404, so the 200s below are real documents and
+  not an SPA catch-all.
+hosts:
+- host: https://www.tecovas.com
+  documents:
+  - path: /.well-known/api-catalog
+    status: 200
+    content_type: application/linkset+json
+    file: tecovas-api-catalog.json
+    standard: RFC 9727
+  - path: /.well-known/agent-skills/index.json
+    status: 200
+    content_type: application/json
+    file: tecovas-agent-skills-index.json
+    standard: cloudflare/agent-skills-discovery-rfc
+  - path: /robots.txt
+    status: 200
+    content_type: text/plain
+    file: tecovas-robots.txt
+    standard: Content-Signal
+    note: 'Declares Content-Signal: search=yes, ai-input=yes, ai-train=yes for User-agent *'
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/CONTROL-BOGUS-12345
+    status: 404
+    note: control probe — confirms this host does not soft-200 unknown well-known paths
+- host: https://checkout.tecovas.com
+  documents:
+  - path: /.well-known/ucp
+    status: 200
+    content_type: application/json
+    file: tecovas-ucp.json
+    standard: Universal Commerce Protocol 2026-04-08
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: application/json
+    file: tecovas-oauth-protected-resource.json
+    standard: RFC 9728
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: tecovas-oauth-authorization-server.json
+    standard: RFC 8414
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /CONTROL-BOGUS-999
+    status: 404
+    note: control probe
+- host: https://accounts.tecovas.com
+  documents:
+  - path: /authentication/.well-known/jwks.json
+    status: 200
+    content_type: application/json
+    note: >-
+      JWKS referenced by the checkout host's authorization-server metadata; not saved
+      verbatim because signing keys rotate.
+x-evidence:
+  fetched: '2026-08-05'
+  probes:
+  - {url: 'https://www.tecovas.com/.well-known/api-catalog', status: 200}
+  - {url: 'https://www.tecovas.com/.well-known/agent-skills/index.json', status: 200}
+  - {url: 'https://www.tecovas.com/.well-known/security.txt', status: 404}
+  - {url: 'https://checkout.tecovas.com/.well-known/ucp', status: 200}
+  - {url: 'https://checkout.tecovas.com/.well-known/oauth-authorization-server', status: 200}
+  - {url: 'https://checkout.tecovas.com/.well-known/oauth-protected-resource', status: 200}
+  - {url: 'https://accounts.tecovas.com/authentication/.well-known/jwks.json', status: 200}

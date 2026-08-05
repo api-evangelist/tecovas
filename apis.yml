@@ -1,23 +1,152 @@
 aid: tecovas
 name: Tecovas
-description: 'Tecovas is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'Tecovas is an Austin, Texas direct-to-consumer Western wear brand selling handcrafted
+  cowboy boots, work boots, hats, leather goods and apparel for men, women and kids, made by artisans
+  in Leon, Mexico and sold online and through its own US retail stores. Its storefront runs on Shopify
+  Hydrogen (React Router 7) with Sanity content and Algolia search, and it publishes an unusually
+  complete agent-facing surface for a retailer: an llms.txt, an agents.md, an RFC 9727 api-catalog
+  linkset of read-only JSON endpoints, a Cloudflare-style agent-skills discovery index, an anonymously
+  introspectable Shopify Storefront GraphQL API, and a Universal Commerce Protocol (UCP) MCP endpoint
+  on its Shopify checkout host for agent-driven cart and checkout.'
 url: https://raw.githubusercontent.com/api-evangelist/tecovas/refs/heads/main/apis.yml
+image: https://cdn.sanity.io/images/v8kybopt/production/073bf9cd1134041e2c334a569e22504347e336eb-8108x5289.jpg?auto=format&fit=max&w=1200
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-05'
 modified: '2026-08-05'
 tags:
 - Company
-apis: []
+- Retail
+- E-Commerce
+- Apparel
+- Footwear
+- Direct to Consumer
+- Shopify
+- Agentic Commerce
+- Universal Commerce Protocol
+- Product Catalog
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- aid: tecovas:tecovas-storefront-content-api
+  name: Tecovas Storefront Content API
+  description: 'Read-only JSON endpoints on the Tecovas storefront host, published in the company''s
+    own RFC 9727 api-catalog linkset and documented in its agents.md. Covers product detail by slug,
+    collection metadata, Algolia-backed collection products and free-text search, and site-wide
+    search settings. No authentication is required.'
+  humanURL: https://www.tecovas.com/agents.md
+  baseURL: https://www.tecovas.com/api
+  tags:
+  - Products
+  - Collections
+  - Search
+  - Catalog
+  properties:
+  - type: Documentation
+    url: https://www.tecovas.com/agents.md
+  - type: APIReference
+    url: https://www.tecovas.com/.well-known/api-catalog
+  - type: APICatalog
+    url: well-known/tecovas-api-catalog.json
+- aid: tecovas:tecovas-storefront-graphql-api
+  name: Tecovas Storefront GraphQL API
+  description: 'The Shopify Storefront GraphQL API as deployed on the Tecovas checkout host. Anonymous
+    introspection succeeds (424 types, 35 query fields, 41 mutations), covering products, collections,
+    carts, blogs, menus, metaobjects, localization and search. Not listed in the company''s own
+    api-catalog, but reachable without credentials.'
+  humanURL: https://checkout.tecovas.com/agents.md
+  baseURL: https://checkout.tecovas.com/api/2026-01/graphql.json
+  tags:
+  - GraphQL
+  - Products
+  - Cart
+  - Shopify
+  properties:
+  - type: GraphQL
+    url: graphql/tecovas-storefront.graphql
+  - type: Documentation
+    url: https://checkout.tecovas.com/agents.md
+- aid: tecovas:tecovas-ucp-agentic-commerce
+  name: Tecovas Agentic Commerce (UCP/MCP)
+  description: 'Tecovas implements the Universal Commerce Protocol 2026-04-08 on its Shopify checkout
+    host, exposing an MCP endpoint whose tools/list returns 13 tools with full JSON Schema inputs for
+    catalog search and lookup, cart lifecycle, checkout lifecycle and order retrieval. Payment handlers
+    advertised are Google Pay, Shopify card and Shop Pay. Checkout completion requires explicit
+    contemporaneous human approval per the published agent instructions.'
+  humanURL: https://checkout.tecovas.com/agents.md
+  baseURL: https://checkout.tecovas.com/api/ucp/mcp
+  tags:
+  - MCP
+  - Agentic Commerce
+  - Checkout
+  - Cart
+  - Orders
+  properties:
+  - type: MCPServer
+    url: mcp/tecovas-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/tecovas-tool-crosswalk.yml
+  - type: Documentation
+    url: https://checkout.tecovas.com/agents.md
 common:
 - type: Website
+  url: https://www.tecovas.com/
+- type: Documentation
+  url: https://www.tecovas.com/agents.md
+- type: APIReference
+  url: https://www.tecovas.com/.well-known/api-catalog
+- type: GettingStarted
+  url: https://www.tecovas.com/agents.md#typical-agent-flow
+- type: Support
+  url: https://www.tecovas.com/help-center
+- type: Blog
+  url: https://www.tecovas.com/blog
+- type: PrivacyPolicy
+  url: https://www.tecovas.com/p/privacy-policy
+- type: TermsOfService
+  url: https://www.tecovas.com/p/terms-and-conditions
+- type: LLMsTxt
+  url: llms/tecovas-llms.txt
+- type: WellKnown
+  url: well-known/tecovas-well-known.yml
+- type: APICatalog
+  url: well-known/tecovas-api-catalog.json
+- type: ContentSignal
+  url: well-known/tecovas-robots.txt
+- type: AgentSkill
+  url: skills/_index.yml
+- type: MCPServer
+  url: mcp/tecovas-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/tecovas-tool-crosswalk.yml
+- type: GraphQL
+  url: graphql/tecovas-storefront.graphql
+- type: Authentication
+  url: authentication/tecovas-authentication.yml
+- type: OAuthScopes
+  url: scopes/tecovas-scopes.yml
+- type: Conventions
+  url: conventions/tecovas-conventions.yml
+- type: Conformance
+  url: conformance/tecovas-conformance.yml
+- type: Lifecycle
+  url: lifecycle/tecovas-lifecycle.yml
+- type: DomainSecurity
+  url: security/tecovas-domain-security.yml
+- type: AgenticAccess
+  url: agentic-access/tecovas-agentic-access.yml
+- type: DataModel
+  url: data-model/tecovas-data-model.yml
+- type: ErrorCatalog
+  url: errors/tecovas-problem-types.yml
+- type: SecondaryMarket
   url: https://forgeglobal.com/tecovas_stock/
+x-enrichment:
+  date: '2026-08-05'
+  status: enriched
+  artifacts_added: 28
+  pass: local-v1

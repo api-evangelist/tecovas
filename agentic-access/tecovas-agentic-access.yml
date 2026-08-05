@@ -1,0 +1,187 @@
+generated: '2026-08-05'
+method: generated
+source: mcp/tecovas-ucp-tools-list.json + well-known/tecovas-api-catalog.json + https://checkout.tecovas.com/agents.md
+note: >-
+  A recommended x-agentic-access execution contract per operation, classified with the standard
+  pipeline heuristics (read/connected for GET, acting/write for mutations, consequence raised to
+  physical on payment and order operations). This is a governance starting point, not a Tecovas
+  claim. It is unusual in one respect: Tecovas already publishes a human-in-the-loop invariant of
+  its own — both agents.md documents forbid completing checkout or payment without explicit,
+  contemporaneous buyer approval — so the human_in_the_loop values on the checkout tools below
+  are the provider's stated policy, not our inference. `audience` is left null to bind per
+  deployment.
+summary:
+  operations: 17
+  by_action_class: {connected: 4, read: 4, acting: 9}
+  by_consequence: {read: 8, write: 6, physical: 3}
+  human_in_the_loop_required: 3
+  provider_stated_human_approval: true
+  provider_source: https://checkout.tecovas.com/agents.md
+operations:
+- id: GET /api/productdetail/:slug
+  surface: storefront-json
+  action_class: connected
+  consequence: read
+  scope: catalog:read
+  token_ttl_max: 3600
+  audience: null
+  audit: optional
+- id: GET /api/collection
+  surface: storefront-json
+  action_class: connected
+  consequence: read
+  scope: catalog:read
+  token_ttl_max: 3600
+  audience: null
+  audit: optional
+- id: GET /api/collection-products
+  surface: storefront-json
+  action_class: connected
+  consequence: read
+  scope: catalog:read
+  token_ttl_max: 3600
+  audience: null
+  audit: optional
+  note: 'Rate-limit sensitive — the provider asks agents to cap responses with ?limit=.'
+- id: GET /api/search-settings
+  surface: storefront-json
+  action_class: connected
+  consequence: read
+  scope: catalog:read
+  token_ttl_max: 3600
+  audience: null
+  audit: optional
+- id: search_catalog
+  surface: ucp-mcp
+  action_class: read
+  consequence: read
+  scope: catalog:read
+  token_ttl_max: 3600
+  audience: null
+  audit: optional
+- id: lookup_catalog
+  surface: ucp-mcp
+  action_class: read
+  consequence: read
+  scope: catalog:read
+  token_ttl_max: 3600
+  audience: null
+  audit: optional
+- id: get_product
+  surface: ucp-mcp
+  action_class: read
+  consequence: read
+  scope: catalog:read
+  token_ttl_max: 3600
+  audience: null
+  audit: optional
+- id: get_cart
+  surface: ucp-mcp
+  action_class: read
+  consequence: read
+  scope: cart:read
+  token_ttl_max: 3600
+  audience: null
+  audit: optional
+- id: create_cart
+  surface: ucp-mcp
+  action_class: acting
+  consequence: write
+  scope: cart:write
+  token_ttl_max: 900
+  audience: null
+  audit: required
+- id: update_cart
+  surface: ucp-mcp
+  action_class: acting
+  consequence: write
+  scope: cart:write
+  token_ttl_max: 900
+  audience: null
+  audit: required
+- id: cancel_cart
+  surface: ucp-mcp
+  action_class: acting
+  consequence: write
+  scope: cart:write
+  token_ttl_max: 900
+  audience: null
+  audit: required
+- id: create_checkout
+  surface: ucp-mcp
+  action_class: acting
+  consequence: write
+  scope: checkout:write
+  token_ttl_max: 900
+  audience: null
+  audit: required
+- id: get_checkout
+  surface: ucp-mcp
+  action_class: read
+  consequence: read
+  scope: checkout:read
+  token_ttl_max: 3600
+  audience: null
+  audit: optional
+- id: update_checkout
+  surface: ucp-mcp
+  action_class: acting
+  consequence: physical
+  scope: checkout:write
+  token_ttl_max: 300
+  audience: null
+  audit: required
+  token_exchange: true
+  purpose_required: true
+  note: Carries shipping address, delivery method and payment instrument selection.
+- id: complete_checkout
+  surface: ucp-mcp
+  action_class: acting
+  consequence: physical
+  scope: checkout:complete
+  token_ttl_max: 300
+  audience: null
+  audit: required
+  token_exchange: true
+  purpose_required: true
+  human_in_the_loop: required
+  human_in_the_loop_source: https://checkout.tecovas.com/agents.md
+  note: >-
+    Finalizes payment and places a real order for physical goods. The provider explicitly
+    forbids completing this without contemporaneous buyer approval.
+- id: cancel_checkout
+  surface: ucp-mcp
+  action_class: acting
+  consequence: physical
+  scope: checkout:write
+  token_ttl_max: 300
+  audience: null
+  audit: required
+  human_in_the_loop: required
+  human_in_the_loop_source: https://checkout.tecovas.com/agents.md
+  note: Destructive against a buyer-owned checkout.
+- id: get_order
+  surface: ucp-mcp
+  action_class: read
+  consequence: read
+  scope: customer-account-api:full
+  token_ttl_max: 3600
+  audience: null
+  audit: required
+  note: >-
+    Returns buyer PII (addresses, purchase history). Requires an authenticated Shopify customer
+    account token; the human_in_the_loop decision belongs to the consent flow, not this call.
+prohibited_by_provider:
+  source: https://www.tecovas.com/agents.md
+  rules:
+  - Do not complete checkout, payment or order placement automatically.
+  - No scripted form fills or browser automation that finalize payment without explicit human approval.
+  - 'Do not access robots.txt-disallowed paths: /account, /admin, /cart, /carts, /checkout, /checkouts/, /orders/*.'
+  - Honor Crawl-delay directives and back off on 429.
+x-evidence:
+  fetched: '2026-08-05'
+  probes:
+  - {url: 'https://checkout.tecovas.com/api/ucp/mcp', status: 200, note: 'POST tools/list — 13 tools classified'}
+  - {url: 'https://checkout.tecovas.com/agents.md', status: 200}
+  - {url: 'https://www.tecovas.com/agents.md', status: 200}
+  - {url: 'https://www.tecovas.com/.well-known/api-catalog', status: 200}

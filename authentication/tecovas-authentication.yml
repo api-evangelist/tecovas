@@ -1,0 +1,70 @@
+generated: '2026-08-05'
+method: searched
+source: https://checkout.tecovas.com/.well-known/oauth-authorization-server
+docs: https://www.tecovas.com/agents.md
+summary:
+  types: [none, oauth2, openIdConnect]
+  api_key_in: []
+  oauth2_flows: [authorizationCode]
+  note: >-
+    Tecovas runs two authentication postures. The public read surfaces — the storefront JSON
+    endpoints and the Shopify Storefront GraphQL API — take no credentials at all. The
+    transactional UCP/MCP surface on the checkout host sits in front of Shopify customer
+    accounts, whose OAuth 2.0 / OIDC authorization-server metadata is published anonymously.
+schemes:
+- name: none
+  type: none
+  applies_to:
+  - https://www.tecovas.com/api/productdetail/:slug
+  - https://www.tecovas.com/api/collection
+  - https://www.tecovas.com/api/collection-products
+  - https://www.tecovas.com/api/search-settings
+  - https://checkout.tecovas.com/api/2026-01/graphql.json
+  evidence: >-
+    agents.md states "This site exposes read-only product, collection, and search APIs — no
+    authentication required." All four endpoints and GraphQL introspection returned 200
+    anonymously on 2026-08-05.
+- name: ucp-agent-profile
+  type: profile
+  applies_to: [https://checkout.tecovas.com/api/ucp/mcp]
+  parameter: meta.ucp-agent.profile
+  in: request-body
+  required: true
+  description: >-
+    Every UCP MCP tool requires a meta.ucp-agent.profile URI identifying the calling agent.
+    tools/list is anonymous, but an initialize call without a profile returns JSON-RPC error
+    -32001 invalid_profile_url (HTTP 422).
+  evidence: mcp/tecovas-ucp-tools-list.json
+- name: shopify-customer-accounts
+  type: oauth2
+  issuer: https://shopify.com/authentication/9910824
+  authorizationUrl: https://accounts.tecovas.com/authentication/oauth/authorize
+  tokenUrl: https://accounts.tecovas.com/authentication/oauth/token
+  jwks_uri: https://accounts.tecovas.com/authentication/.well-known/jwks.json
+  end_session_endpoint: https://accounts.tecovas.com/authentication/logout
+  flows:
+  - flow: authorizationCode
+    pkce: [S256]
+  grant_types: [authorization_code, refresh_token, 'urn:ietf:params:oauth:grant-type:jwt-bearer']
+  token_endpoint_auth_methods: [client_secret_basic]
+  id_token_signing_alg: [RS256]
+  response_types: [code]
+  subject_types: [public]
+  claims: [iss, sub, aud, exp, iat, nonce, sid, email, email_verified]
+  sources: [well-known/tecovas-oauth-authorization-server.json]
+protected_resource:
+  resource: https://checkout.tecovas.com
+  authorization_servers:
+  - https://accounts.tecovas.com
+  - https://shopify.com/authentication/9910824
+  bearer_methods_supported: [header]
+  source: well-known/tecovas-oauth-protected-resource.json
+  standard: RFC 9728
+x-evidence:
+  fetched: '2026-08-05'
+  probes:
+  - {url: 'https://checkout.tecovas.com/.well-known/oauth-authorization-server', status: 200}
+  - {url: 'https://checkout.tecovas.com/.well-known/oauth-protected-resource', status: 200}
+  - {url: 'https://accounts.tecovas.com/authentication/.well-known/jwks.json', status: 200}
+  - {url: 'https://www.tecovas.com/api/search-settings', status: 200}
+  - {url: 'https://checkout.tecovas.com/api/2026-01/graphql.json', status: 200}

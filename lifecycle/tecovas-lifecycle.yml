@@ -1,0 +1,51 @@
+generated: '2026-08-05'
+method: searched
+source: https://checkout.tecovas.com/.well-known/ucp
+note: >-
+  Tecovas publishes no status page, no deprecation policy, no SLA and no changelog on any host it
+  controls. What versioning exists is inherited from the two protocols it implements, and both are
+  date-versioned with an explicit supported-versions list. No StatusPage or Deprecation pointer is
+  claimed.
+versioning:
+- surface: UCP / MCP commerce
+  scheme: dated
+  current: '2026-04-08'
+  supported: ['2026-04-08', '2026-01-23']
+  discovery: https://checkout.tecovas.com/.well-known/ucp
+  evidence: 'ucp.supported_versions maps each version to its own /.well-known/ucp/<date> document.'
+- surface: Storefront GraphQL
+  scheme: dated-path
+  current: '2026-01'
+  discovery: 'publicApiVersions query field on the Storefront schema'
+  evidence: https://checkout.tecovas.com/api/2026-01/graphql.json
+- surface: Storefront JSON API
+  scheme: unversioned
+  current: null
+  evidence: >-
+    No version segment or version header on /api/productdetail, /api/collection,
+    /api/collection-products or /api/search-settings.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  evidence: >-
+    No deprecation or sunset policy is published. The GraphQL schema does carry per-field
+    @deprecated directives with reasons (Shopify's own deprecations), which is the only
+    deprecation signal on any surface.
+  deprecated_field_source: graphql/tecovas-storefront.graphql
+sla:
+  url: null
+  uptime_target: null
+status_page: null
+status_page_evidence: 'status.tecovas.com does not resolve (DNS NXDOMAIN, probed 2026-08-05).'
+changelog: null
+changelog_evidence: 'https://www.tecovas.com/changelog returned 404.'
+support:
+  help_center: https://www.tecovas.com/help-center
+  returns: https://www.tecovas.com/returns
+x-evidence:
+  fetched: '2026-08-05'
+  probes:
+  - {url: 'https://checkout.tecovas.com/.well-known/ucp', status: 200}
+  - {url: 'https://www.tecovas.com/changelog', status: 404}
+  - {url: 'https://status.tecovas.com/', status: 0, note: 'DNS did not resolve'}
+  - {url: 'https://www.tecovas.com/help-center', status: 200}

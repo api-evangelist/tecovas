@@ -1,0 +1,164 @@
+generated: '2026-08-05'
+method: derived
+source: mcp/tecovas-ucp-tools-list.json
+note: >-
+  Tecovas publishes no OpenAPI, so the REST column below binds to the endpoint paths the company
+  itself declares in /.well-known/api-catalog and agents.md rather than to operationIds. The
+  GraphQL column binds to fields verified present in graphql/tecovas-storefront.graphql. Nothing
+  is mapped that was not observed in one of those three documents.
+surfaces:
+  rest:
+    base: https://www.tecovas.com/api
+    catalog: well-known/tecovas-api-catalog.json
+    spec: null
+    spec_note: 'No OpenAPI; the api-catalog links each endpoint to llms.txt as its service-doc.'
+    gated: false
+    endpoints:
+    - GET /productdetail/:slug
+    - GET /collection?slug=
+    - GET /collection-products?slug=|?search=
+    - GET /search-settings
+  graphql:
+    endpoint: https://checkout.tecovas.com/api/2026-01/graphql.json
+    sdl: graphql/tecovas-storefront.graphql
+    gated: false
+    introspection: open
+  mcp:
+    url: https://checkout.tecovas.com/api/ucp/mcp
+    manifest: mcp/tecovas-mcp.yml
+    gated: false
+    gated_note: >-
+      tools/list is anonymous and returned full inputSchemas; tools/call requires a
+      meta.ucp-agent.profile URI.
+crosswalk:
+- tool: search_catalog
+  category: catalog
+  rest: ['GET /collection-products?search=']
+  graphql: [search, predictiveSearch, products]
+  binding: rest+graphql
+  confidence: high
+  note: >-
+    Same intent, different backends and different hosts — the REST path is Algolia-backed on the
+    storefront host, the MCP tool is Shopify catalog on the checkout host. Result shapes differ.
+- tool: lookup_catalog
+  category: catalog
+  rest: []
+  graphql: [nodes, products]
+  binding: graphql
+  confidence: medium
+  note: 'Batch resolve by identifier; no REST equivalent — /productdetail is single-slug only.'
+- tool: get_product
+  category: catalog
+  rest: ['GET /productdetail/:slug']
+  graphql: [product, productByHandle]
+  binding: rest+graphql
+  confidence: high
+  note: >-
+    REST keys on the storefront slug; the MCP tool keys on a UCP catalog identifier. Not
+    interchangeable identifiers.
+- tool: get_cart
+  category: cart
+  rest: []
+  graphql: [cart]
+  binding: graphql
+  confidence: high
+- tool: create_cart
+  category: cart
+  rest: []
+  graphql: [cartCreate]
+  binding: graphql
+  confidence: high
+- tool: update_cart
+  category: cart
+  rest: []
+  graphql: [cartLinesAdd, cartLinesUpdate, cartLinesRemove, cartAttributesUpdate, cartNoteUpdate,
+    cartDiscountCodesUpdate, cartBuyerIdentityUpdate, cartDeliveryAddressesUpdate, cartSelectedDeliveryOptionsUpdate]
+  binding: graphql
+  confidence: medium
+  note: One UCP tool fans out across nine Storefront cart mutations.
+- tool: cancel_cart
+  category: cart
+  rest: []
+  graphql: []
+  binding: none
+  confidence: low
+  note: 'No direct Storefront mutation; closest is cartRemovePersonalData, which is not equivalent.'
+- tool: create_checkout
+  category: checkout
+  rest: []
+  graphql: [cartPrepareForCompletion]
+  binding: graphql
+  confidence: low
+  note: UCP checkout is a distinct object from a Storefront cart; mapping is semantic, not structural.
+- tool: get_checkout
+  category: checkout
+  rest: []
+  graphql: [cartCompletionAttempt]
+  binding: graphql
+  confidence: low
+- tool: update_checkout
+  category: checkout
+  rest: []
+  graphql: [cartBillingAddressUpdate, cartPaymentUpdate, cartDeliveryAddressesReplace]
+  binding: graphql
+  confidence: low
+- tool: complete_checkout
+  category: checkout
+  rest: []
+  graphql: [cartSubmitForCompletion]
+  binding: graphql
+  confidence: medium
+  note: 'Human-approval gated. Both agents.md documents forbid completing payment without buyer consent.'
+- tool: cancel_checkout
+  category: checkout
+  rest: []
+  graphql: []
+  binding: none
+  confidence: low
+- tool: get_order
+  category: order
+  rest: []
+  graphql: []
+  binding: none
+  confidence: low
+  note: >-
+    Order retrieval is not on the anonymous Storefront schema; it requires the authenticated
+    Customer Account API (scope customer-account-api:full).
+mcp_only:
+- tool: cancel_cart
+  reason: No equivalent Storefront mutation or REST endpoint.
+- tool: cancel_checkout
+  reason: UCP checkout lifecycle has no Storefront or REST counterpart.
+- tool: get_order
+  reason: Requires authenticated Shopify Customer Account API, not the anonymous public surfaces.
+- tool: lookup_catalog
+  reason: Batch identifier resolution; the REST surface exposes single-slug lookup only.
+rest_only:
+- endpoint: GET /search-settings
+  capability: Site-wide search settings, facets and configuration
+  reason: Storefront presentation configuration; no MCP tool and no GraphQL field exposes it.
+- endpoint: GET /collection?slug=
+  capability: Collection metadata, filter groups and SEO (no products)
+  reason: >-
+    Sanity-backed merchandising metadata unique to the Tecovas storefront; the MCP catalog tools
+    return products, not collection page metadata.
+graphql_only:
+- fields: [article, articles, blog, blogs, blogByHandle, page, pages, pageByHandle, menu, metaobject,
+    metaobjects, sitemap, urlRedirects, localization, locations, shop, paymentSettings, productTags,
+    productTypes, productRecommendations, shopPayInstallmentsPricing]
+  reason: Content, navigation, store and merchandising surfaces exposed by GraphQL alone.
+coverage:
+  mcp_tools_total: 13
+  mcp_tools_bound_to_rest: 2
+  mcp_tools_bound_to_graphql: 9
+  mcp_only: 4
+  rest_endpoints_total: 4
+  rest_endpoints_with_a_tool: 2
+  graphql_query_fields: 35
+  graphql_mutation_fields: 41
+x-evidence:
+  fetched: '2026-08-05'
+  probes:
+  - {url: 'https://checkout.tecovas.com/api/ucp/mcp', status: 200, note: 'POST tools/list, 13 tools'}
+  - {url: 'https://checkout.tecovas.com/api/2026-01/graphql.json', status: 200, note: 'full introspection, 424 types'}
+  - {url: 'https://www.tecovas.com/.well-known/api-catalog', status: 200}

@@ -1,0 +1,65 @@
+generated: '2026-08-05'
+method: searched
+source: https://www.tecovas.com/.well-known/agent-skills/index.json
+note: >-
+  These are NOT generated. Tecovas publishes its own agent skills at
+  /.well-known/agent-skills/, declared against the cloudflare/agent-skills-discovery-rfc schema,
+  each with a sha256 integrity hash. Every file below is saved verbatim as fetched. The two
+  agents.md documents are the provider's own agent operating instructions and are saved verbatim
+  alongside them.
+discovery:
+  index: https://www.tecovas.com/.well-known/agent-skills/index.json
+  schema: https://raw.githubusercontent.com/cloudflare/agent-skills-discovery-rfc/main/schema.json
+  file: ../well-known/tecovas-agent-skills-index.json
+skills:
+- file: tecovas-search-products.md
+  name: search-products
+  description: >-
+    Free-text search of the Tecovas catalog (boots, apparel, hats, accessories, gift cards),
+    Algolia-backed.
+  url: https://www.tecovas.com/.well-known/agent-skills/skills/search-products.md
+  sha256: 00b5e540ab0a0d094bad5653668da3a524c9ae9291db193ba6b013c57a0cbb26
+  api: https://www.tecovas.com/api/collection-products
+  operations: ['GET /api/collection-products?search=<query>']
+  method: searched
+- file: tecovas-get-product-details.md
+  name: get-product-details
+  description: Fetch full product detail (variants, sizes, media) by slug.
+  url: https://www.tecovas.com/.well-known/agent-skills/skills/get-product-details.md
+  sha256: cdbebaa64aa2437eb7f071e51e79dbbb2c4132106f37dff69d5a96128ea747fc
+  api: https://www.tecovas.com/api/productdetail
+  operations: ['GET /api/productdetail/:slug']
+  method: searched
+- file: tecovas-find-store.md
+  name: find-store
+  description: Find Tecovas retail stores by location.
+  url: https://www.tecovas.com/.well-known/agent-skills/skills/find-store.md
+  sha256: 846c70f06c6365addeaef2b67a44c479fd044109743ec3fb6b7c634b9d844a76
+  api: https://www.tecovas.com/stores
+  operations: []
+  method: searched
+  note: >-
+    The skill itself states there is no JSON store API at this origin; it directs agents to
+    parse /stores and the per-store JSON-LD.
+agent_instructions:
+- file: tecovas-agents.md
+  url: https://www.tecovas.com/agents.md
+  scope: storefront — read-only browsing, discovery documents, typical agent flow, agent rules
+  method: searched
+- file: tecovas-checkout-agents.md
+  url: https://checkout.tecovas.com/agents.md
+  scope: checkout — UCP commerce flow, human-approval invariant, Shopify Shop skill recommendation
+  method: searched
+divergence_note: >-
+  The published search-products skill documents the response as product cards with `title` and
+  `handle`. The live response on 2026-08-05 returned `name` and `slug` instead. Recorded, not
+  corrected — the skill file is saved as the provider serves it.
+x-evidence:
+  fetched: '2026-08-05'
+  probes:
+  - {url: 'https://www.tecovas.com/.well-known/agent-skills/index.json', status: 200}
+  - {url: 'https://www.tecovas.com/.well-known/agent-skills/skills/search-products.md', status: 200}
+  - {url: 'https://www.tecovas.com/.well-known/agent-skills/skills/get-product-details.md', status: 200}
+  - {url: 'https://www.tecovas.com/.well-known/agent-skills/skills/find-store.md', status: 200}
+  - {url: 'https://www.tecovas.com/agents.md', status: 200}
+  - {url: 'https://checkout.tecovas.com/agents.md', status: 200}

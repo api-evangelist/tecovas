@@ -1,0 +1,200 @@
+generated: '2026-08-05'
+method: searched
+status: published
+source: https://checkout.tecovas.com/.well-known/ucp
+server:
+  name: tecovas-ucp-shopping
+  transport: http
+  protocol: MCP (JSON-RPC 2.0 over HTTP POST)
+  url: https://checkout.tecovas.com/api/ucp/mcp
+  alternate_url: https://tecovas-3.myshopify.com/api/ucp/mcp
+  operator: Shopify (Universal Commerce Protocol native support)
+  ucp_version: '2026-04-08'
+  ucp_supported_versions:
+  - '2026-04-08'
+  - '2026-01-23'
+  service: dev.ucp.shopping
+  schema: https://ucp.dev/2026-04-08/services/shopping/mcp.openrpc.json
+discovery:
+  ucp_profile: https://checkout.tecovas.com/.well-known/ucp
+  agents_md: https://checkout.tecovas.com/agents.md
+  storefront_agents_md: https://www.tecovas.com/agents.md
+authentication:
+  tools_list: anonymous — tools/list returned 200 with full inputSchema, no credentials
+  tools_call: requires a UCP agent profile URI in meta.ucp-agent.profile; an initialize call without one returns
+    JSON-RPC -32001 invalid_profile_url (HTTP 422)
+  buyer_auth: Shopify customer accounts; see well-known/tecovas-oauth-authorization-server.json
+capabilities:
+- dev.ucp.shopping.cart
+- dev.ucp.shopping.checkout
+- dev.ucp.shopping.fulfillment
+- dev.ucp.shopping.discount
+- dev.ucp.shopping.order
+- dev.ucp.shopping.catalog.search
+- dev.ucp.shopping.catalog.lookup
+- dev.shopify.catalog
+payment_handlers:
+- com.google.pay
+- dev.shopify.card
+- dev.shopify.shop_pay
+human_approval_required: true
+human_approval_note: Both agents.md documents state agents must not complete checkout or payment without explicit,
+  contemporaneous buyer approval.
+tools:
+- name: get_checkout
+  category: checkout
+  description: Returns details about the checkout, including line items, totals, and any applicable discounts or
+    taxes.
+  input_properties:
+  - meta
+  - id
+  required:
+  - meta
+  - id
+  input_schema: mcp/tecovas-ucp-tools-list.json#/result/tools/0/inputSchema
+- name: create_checkout
+  category: checkout
+  description: Creates a checkout. Returns checkout details, including line items, totals, and any applicable discounts
+    or taxes.
+  input_properties:
+  - meta
+  - checkout
+  required:
+  - meta
+  - checkout
+  input_schema: mcp/tecovas-ucp-tools-list.json#/result/tools/1/inputSchema
+- name: update_checkout
+  category: checkout
+  description: Updates a checkout. Returns checkout details, including line items, totals, and any applicable discounts
+    or taxes.
+  input_properties:
+  - meta
+  - checkout
+  - id
+  required:
+  - meta
+  - checkout
+  - id
+  input_schema: mcp/tecovas-ucp-tools-list.json#/result/tools/2/inputSchema
+- name: complete_checkout
+  category: checkout
+  description: Completes a checkout and returns the checkout result. Returns details about the completed checkout,
+    including order ID, Thank You Page URL, or any errors encountered.
+  input_properties:
+  - meta
+  - checkout
+  - id
+  required:
+  - meta
+  - id
+  - checkout
+  input_schema: mcp/tecovas-ucp-tools-list.json#/result/tools/3/inputSchema
+- name: cancel_checkout
+  category: checkout
+  description: Cancels a checkout.
+  input_properties:
+  - meta
+  - id
+  required:
+  - meta
+  - id
+  input_schema: mcp/tecovas-ucp-tools-list.json#/result/tools/4/inputSchema
+- name: get_cart
+  category: cart
+  description: Get the cart contents
+  input_properties:
+  - meta
+  - id
+  required:
+  - meta
+  - id
+  input_schema: mcp/tecovas-ucp-tools-list.json#/result/tools/5/inputSchema
+- name: create_cart
+  category: cart
+  description: Creates a new cart
+  input_properties:
+  - meta
+  - cart
+  required:
+  - meta
+  - cart
+  input_schema: mcp/tecovas-ucp-tools-list.json#/result/tools/6/inputSchema
+- name: update_cart
+  category: cart
+  description: Perform updates to a cart.
+  input_properties:
+  - meta
+  - cart
+  - id
+  required:
+  - meta
+  - cart
+  - id
+  input_schema: mcp/tecovas-ucp-tools-list.json#/result/tools/7/inputSchema
+- name: cancel_cart
+  category: cart
+  description: Cancels a cart.
+  input_properties:
+  - meta
+  - id
+  required:
+  - meta
+  - id
+  input_schema: mcp/tecovas-ucp-tools-list.json#/result/tools/8/inputSchema
+- name: get_order
+  category: order
+  description: Get the details of an order
+  input_properties:
+  - meta
+  - id
+  required:
+  - meta
+  - id
+  input_schema: mcp/tecovas-ucp-tools-list.json#/result/tools/9/inputSchema
+- name: search_catalog
+  category: catalog
+  description: Search for products from the online store, hosted on Shopify. This tool can be used to search for
+    products using natural language queries, specific filter criteria, or both. At least one of query or filters
+    must be provided. Results are paginated, with initial results limited to improve experience. Use the pagination.cursor
+    from the response to fetch additional pages when users request more result
+  input_properties:
+  - meta
+  - catalog
+  required:
+  - meta
+  - catalog
+  input_schema: mcp/tecovas-ucp-tools-list.json#/result/tools/10/inputSchema
+- name: lookup_catalog
+  category: catalog
+  description: 'Look up multiple products or variants by identifier. Use this tool to resolve multiple product/variant
+    IDs in a single request. Supports: - Product IDs (gid://shopify/Product/...): Returns product with match: "featured"
+    - Variant IDs (gid://shopify/ProductVariant/...): Returns parent product with the exact variant Results are
+    grouped by product. Each variant includes an inputs array showing which '
+  input_properties:
+  - meta
+  - catalog
+  required:
+  - meta
+  - catalog
+  input_schema: mcp/tecovas-ucp-tools-list.json#/result/tools/11/inputSchema
+- name: get_product
+  category: catalog
+  description: Retrieve complete product detail by identifier. Returns a singular product with a relevant set of
+    variants, exact pricing, and real-time availability. Supports interactive option selection via selected and
+    preferences parameters for variant narrowing and availability signals. Use for product detail page rendering
+    and purchase decisions.
+  input_properties:
+  - meta
+  - catalog
+  required:
+  - meta
+  - catalog
+  input_schema: mcp/tecovas-ucp-tools-list.json#/result/tools/12/inputSchema
+x-evidence:
+  fetched: '2026-08-05'
+  url: https://tecovas-3.myshopify.com/api/ucp/mcp
+  method: POST tools/list
+  http_status: 200
+  content_type: application/json; charset=utf-8
+  tool_count: 13
+  verbatim_file: mcp/tecovas-ucp-tools-list.json

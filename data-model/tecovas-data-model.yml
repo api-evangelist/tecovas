@@ -1,0 +1,584 @@
+generated: '2026-08-05'
+method: derived
+source: graphql/tecovas-storefront-introspection.json + live /api/productdetail response
+note: Two distinct data models coexist. The Shopify Storefront GraphQL schema is the commerce core (products,
+  variants, carts, orders). The Tecovas storefront JSON API exposes a separate Sanity-backed merchandising
+  model whose central entity is the colorway, not the Shopify variant. Relationships in the graphql section
+  were read directly from the introspection document; relationships in the storefront section were read
+  from an actual /api/productdetail/the-earl response body. Nothing is inferred from a spec, because Tecovas
+  publishes none.
+entities:
+- name: Product
+  surface: storefront-graphql
+  description: A sellable product in the Shopify commerce core.
+  source: graphql/tecovas-storefront.graphql
+  relationships:
+  - via: adjacentVariants
+    target: ProductVariant
+    cardinality: has_many
+  - via: category
+    target: TaxonomyCategory
+    cardinality: has_one
+  - via: collections
+    target: Collection
+    cardinality: has_many
+  - via: compareAtPriceRange
+    target: ProductPriceRange
+    cardinality: has_one
+  - via: featuredImage
+    target: Image
+    cardinality: has_one
+  - via: images
+    target: Image
+    cardinality: has_many
+  - via: media
+    target: Media
+    cardinality: has_many
+  - via: metafield
+    target: Metafield
+    cardinality: has_one
+  - via: metafields
+    target: Metafield
+    cardinality: has_many
+  - via: options
+    target: ProductOption
+    cardinality: has_many
+  - via: priceRange
+    target: ProductPriceRange
+    cardinality: has_one
+  - via: selectedOrFirstAvailableVariant
+    target: ProductVariant
+    cardinality: has_one
+  - via: sellingPlanGroups
+    target: SellingPlanGroup
+    cardinality: has_many
+  - via: seo
+    target: SEO
+    cardinality: has_one
+  - via: variantBySelectedOptions
+    target: ProductVariant
+    cardinality: has_one
+  - via: variants
+    target: ProductVariant
+    cardinality: has_many
+  - via: variantsCount
+    target: Count
+    cardinality: has_one
+- name: ProductVariant
+  surface: storefront-graphql
+  description: A purchasable SKU of a product (size/width/color combination).
+  source: graphql/tecovas-storefront.graphql
+  relationships:
+  - via: compareAtPrice
+    target: MoneyV2
+    cardinality: has_one
+  - via: components
+    target: ProductVariantComponent
+    cardinality: has_many
+  - via: groupedBy
+    target: ProductVariant
+    cardinality: has_many
+  - via: image
+    target: Image
+    cardinality: has_one
+  - via: metafield
+    target: Metafield
+    cardinality: has_one
+  - via: metafields
+    target: Metafield
+    cardinality: has_many
+  - via: price
+    target: MoneyV2
+    cardinality: has_one
+  - via: product
+    target: Product
+    cardinality: has_one
+  - via: quantityPriceBreaks
+    target: QuantityPriceBreak
+    cardinality: has_many
+  - via: quantityRule
+    target: QuantityRule
+    cardinality: has_one
+  - via: selectedOptions
+    target: SelectedOption
+    cardinality: has_many
+  - via: sellingPlanAllocations
+    target: SellingPlanAllocation
+    cardinality: has_many
+  - via: shopPayInstallmentsPricing
+    target: ShopPayInstallmentsProductVariantPricing
+    cardinality: has_one
+  - via: storeAvailability
+    target: StoreAvailability
+    cardinality: has_many
+  - via: unitPrice
+    target: MoneyV2
+    cardinality: has_one
+  - via: unitPriceMeasurement
+    target: UnitPriceMeasurement
+    cardinality: has_one
+- name: Collection
+  surface: storefront-graphql
+  description: A merchandising grouping of products.
+  source: graphql/tecovas-storefront.graphql
+  relationships:
+  - via: image
+    target: Image
+    cardinality: has_one
+  - via: metafield
+    target: Metafield
+    cardinality: has_one
+  - via: metafields
+    target: Metafield
+    cardinality: has_many
+  - via: products
+    target: Product
+    cardinality: has_many
+  - via: seo
+    target: SEO
+    cardinality: has_one
+- name: Cart
+  surface: storefront-graphql
+  description: An in-progress basket, the object UCP cart tools operate on.
+  source: graphql/tecovas-storefront.graphql
+  relationships:
+  - via: appliedGiftCards
+    target: AppliedGiftCard
+    cardinality: has_many
+  - via: attribute
+    target: Attribute
+    cardinality: has_one
+  - via: attributes
+    target: Attribute
+    cardinality: has_many
+  - via: buyerIdentity
+    target: CartBuyerIdentity
+    cardinality: has_one
+  - via: cost
+    target: CartCost
+    cardinality: has_one
+  - via: delivery
+    target: CartDelivery
+    cardinality: has_one
+  - via: deliveryGroups
+    target: CartDeliveryGroup
+    cardinality: has_many
+  - via: discountCodes
+    target: CartDiscountCode
+    cardinality: has_many
+  - via: lines
+    target: BaseCartLine
+    cardinality: has_many
+  - via: metafield
+    target: Metafield
+    cardinality: has_one
+  - via: metafields
+    target: Metafield
+    cardinality: has_many
+- name: CartLine
+  surface: storefront-graphql
+  description: A single line item within a cart.
+  source: graphql/tecovas-storefront.graphql
+  relationships:
+  - via: attribute
+    target: Attribute
+    cardinality: has_one
+  - via: attributes
+    target: Attribute
+    cardinality: has_many
+  - via: cost
+    target: CartLineCost
+    cardinality: has_one
+  - via: discountAllocations
+    target: CartDiscountAllocation
+    cardinality: has_many
+  - via: instructions
+    target: CartLineInstructions
+    cardinality: has_one
+  - via: merchandise
+    target: Merchandise
+    cardinality: has_one
+  - via: parentRelationship
+    target: CartLineParentRelationship
+    cardinality: has_one
+  - via: sellingPlanAllocation
+    target: SellingPlanAllocation
+    cardinality: has_one
+- name: Order
+  surface: storefront-graphql
+  description: A completed purchase.
+  source: graphql/tecovas-storefront.graphql
+  relationships:
+  - via: billingAddress
+    target: MailingAddress
+    cardinality: has_one
+  - via: currentSubtotalPrice
+    target: MoneyV2
+    cardinality: has_one
+  - via: currentTotalDuties
+    target: MoneyV2
+    cardinality: has_one
+  - via: currentTotalPrice
+    target: MoneyV2
+    cardinality: has_one
+  - via: currentTotalShippingPrice
+    target: MoneyV2
+    cardinality: has_one
+  - via: currentTotalTax
+    target: MoneyV2
+    cardinality: has_one
+  - via: customAttributes
+    target: Attribute
+    cardinality: has_many
+  - via: discountApplications
+    target: DiscountApplication
+    cardinality: has_many
+  - via: lineItems
+    target: OrderLineItem
+    cardinality: has_many
+  - via: metafield
+    target: Metafield
+    cardinality: has_one
+  - via: metafields
+    target: Metafield
+    cardinality: has_many
+  - via: originalTotalDuties
+    target: MoneyV2
+    cardinality: has_one
+  - via: originalTotalPrice
+    target: MoneyV2
+    cardinality: has_one
+  - via: shippingAddress
+    target: MailingAddress
+    cardinality: has_one
+  - via: shippingDiscountAllocations
+    target: DiscountAllocation
+    cardinality: has_many
+  - via: subtotalPrice
+    target: MoneyV2
+    cardinality: has_one
+  - via: successfulFulfillments
+    target: Fulfillment
+    cardinality: has_many
+  - via: totalPrice
+    target: MoneyV2
+    cardinality: has_one
+  - via: totalRefunded
+    target: MoneyV2
+    cardinality: has_one
+  - via: totalShippingPrice
+    target: MoneyV2
+    cardinality: has_one
+  - via: totalTax
+    target: MoneyV2
+    cardinality: has_one
+- name: Customer
+  surface: storefront-graphql
+  description: A Shopify customer account; requires authentication.
+  source: graphql/tecovas-storefront.graphql
+  relationships:
+  - via: addresses
+    target: MailingAddress
+    cardinality: has_many
+  - via: defaultAddress
+    target: MailingAddress
+    cardinality: has_one
+  - via: metafield
+    target: Metafield
+    cardinality: has_one
+  - via: metafields
+    target: Metafield
+    cardinality: has_many
+  - via: orders
+    target: Order
+    cardinality: has_many
+  - via: socialLoginProvider
+    target: SocialLoginProvider
+    cardinality: has_one
+- name: Image
+  surface: storefront-graphql
+  description: A media asset.
+  source: graphql/tecovas-storefront.graphql
+  relationships: []
+- name: SellingPlan
+  surface: storefront-graphql
+  description: A subscription or deferred-purchase plan attached to a variant.
+  source: graphql/tecovas-storefront.graphql
+  relationships:
+  - via: billingPolicy
+    target: SellingPlanBillingPolicy
+    cardinality: has_one
+  - via: checkoutCharge
+    target: SellingPlanCheckoutCharge
+    cardinality: has_one
+  - via: deliveryPolicy
+    target: SellingPlanDeliveryPolicy
+    cardinality: has_one
+  - via: metafield
+    target: Metafield
+    cardinality: has_one
+  - via: metafields
+    target: Metafield
+    cardinality: has_many
+  - via: options
+    target: SellingPlanOption
+    cardinality: has_many
+  - via: priceAdjustments
+    target: SellingPlanPriceAdjustment
+    cardinality: has_many
+- name: Blog
+  surface: storefront-graphql
+  description: A blog on the storefront.
+  source: graphql/tecovas-storefront.graphql
+  relationships:
+  - via: articleByHandle
+    target: Article
+    cardinality: has_one
+  - via: articles
+    target: Article
+    cardinality: has_many
+  - via: authors
+    target: ArticleAuthor
+    cardinality: has_many
+  - via: metafield
+    target: Metafield
+    cardinality: has_one
+  - via: metafields
+    target: Metafield
+    cardinality: has_many
+  - via: seo
+    target: SEO
+    cardinality: has_one
+- name: Article
+  surface: storefront-graphql
+  description: A blog article.
+  source: graphql/tecovas-storefront.graphql
+  relationships:
+  - via: authorV2
+    target: ArticleAuthor
+    cardinality: has_one
+  - via: blog
+    target: Blog
+    cardinality: has_one
+  - via: comments
+    target: Comment
+    cardinality: has_many
+  - via: image
+    target: Image
+    cardinality: has_one
+  - via: metafield
+    target: Metafield
+    cardinality: has_one
+  - via: metafields
+    target: Metafield
+    cardinality: has_many
+  - via: seo
+    target: SEO
+    cardinality: has_one
+- name: Shop
+  surface: storefront-graphql
+  description: Store-level configuration and policies.
+  source: graphql/tecovas-storefront.graphql
+  relationships:
+  - via: brand
+    target: Brand
+    cardinality: has_one
+  - via: customerAccountTranslations
+    target: Translation
+    cardinality: has_many
+  - via: metafield
+    target: Metafield
+    cardinality: has_one
+  - via: metafields
+    target: Metafield
+    cardinality: has_many
+  - via: paymentSettings
+    target: PaymentSettings
+    cardinality: has_one
+  - via: primaryDomain
+    target: Domain
+    cardinality: has_one
+  - via: privacyPolicy
+    target: ShopPolicy
+    cardinality: has_one
+  - via: refundPolicy
+    target: ShopPolicy
+    cardinality: has_one
+  - via: shippingPolicy
+    target: ShopPolicy
+    cardinality: has_one
+  - via: shopPayInstallmentsPricing
+    target: ShopPayInstallmentsPricing
+    cardinality: has_one
+  - via: socialLoginProviders
+    target: SocialLoginProvider
+    cardinality: has_many
+  - via: subscriptionPolicy
+    target: ShopPolicyWithDefault
+    cardinality: has_one
+  - via: termsOfService
+    target: ShopPolicy
+    cardinality: has_one
+- name: TecovasProduct
+  surface: storefront-json
+  description: The product object returned by GET /api/productdetail/:slug. Keyed by slug; carries a shopifyParentId
+    that links it back to the Shopify commerce core.
+  source: 'observed: GET https://www.tecovas.com/api/productdetail/the-earl (200)'
+  identifiers:
+  - slug
+  - id
+  - pid
+  - shopifyParentId
+  fields:
+  - bestSellerRankRevenue
+  - category
+  - collections
+  - colorways
+  - craftsmanshipModule
+  - dashHudsonGalleryId
+  - description
+  - details
+  - fitGuide
+  - gender
+  - hideCraftsmanshipModule
+  - id
+  - jeansFit
+  - name
+  - pid
+  - primaryOptionLabel
+  - productType
+  - reviewSummary
+  - secondaryOptionLabel
+  - sellable
+  - seoCopyBlock
+  - seoOverride
+  - shopifyParentId
+  - showSecondaryOption
+  - showTaglineOnPLP
+  - silhouette
+  - sizingRec
+  - slug
+  - specifications
+  - tags
+  - toeShape
+  relationships:
+  - via: colorways
+    target: TecovasColorway
+    cardinality: has_many
+  - via: collections
+    target: TecovasCollection
+    cardinality: has_many
+  - via: category
+    target: TecovasCategory
+    cardinality: has_one
+  - via: shopifyParentId
+    target: Product
+    cardinality: belongs_to
+    note: Cross-surface join key into the Shopify Storefront GraphQL Product.
+- name: TecovasColorway
+  surface: storefront-json
+  description: The real merchandising unit on the Tecovas storefront — a colour/material execution of
+    a product, carrying its own price, media, badges and availability. 15 colorways were present on the
+    observed product.
+  source: 'observed: colorways[] on GET /api/productdetail/the-earl'
+  identifiers:
+  - id
+  - pid
+  - _id
+  - _key
+  fields:
+  - _id
+  - _key
+  - _ref
+  - _type
+  - afterpay
+  - altMedia
+  - assortmentRole
+  - badge
+  - bootSole
+  - color
+  - colorwayType
+  - compareAtPrice
+  - coreBrandColorway
+  - customization
+  - customizationPreviewImage
+  - description
+  - details
+  - displayMaterial
+  - displayTitle
+  - earlyAccess
+  - finalSale
+  - finalSaleMarkdown
+  - fitGuide
+  - giftCardType
+  - hidePrice
+  - id
+  - keyFeatures
+  - launchDate
+  - material
+  - media
+  - occasions
+  - optionTooltips
+  - outOfStockStatus
+  - pdpColorwaySection
+  - pid
+  - plpSubtitle
+  - price
+  - product
+  - productGroupButtonsDisabled
+  - promotions
+  - restockedAt
+  - review
+  - safetyStandards
+  - seoOverride
+  - shopifyProductId
+  - socialProof
+  - status
+  - stylecolorId
+  - swatch
+  - title
+  - useDisplayTitle
+  - variants
+  relationships:
+  - via: product
+    target: TecovasProduct
+    cardinality: belongs_to
+  - via: media
+    target: TecovasMedia
+    cardinality: has_many
+  - via: fitGuide
+    target: TecovasFitGuide
+    cardinality: has_one
+- name: TecovasCategory
+  surface: storefront-json
+  description: A Sanity category node with a parent chain and a route path (e.g. /shop/boots/roper-boots)
+    that doubles as the collection slug accepted by /api/collection.
+  source: 'observed: category on GET /api/collection-products?search=roper'
+  identifiers:
+  - _id
+  - route
+  - title
+  relationships:
+  - via: parent
+    target: TecovasCategory
+    cardinality: belongs_to
+cross_surface_keys:
+- from: TecovasProduct.shopifyParentId
+  to: Product
+  note: Only observed join between the Sanity merchandising model and the Shopify commerce core.
+- from: TecovasProduct.slug
+  to: https://www.tecovas.com/products/<slug>
+  note: Product detail page URL and the key for /api/productdetail.
+- from: TecovasCategory.route
+  to: /api/collection?slug=<route>
+  note: Collection metadata lookup key.
+x-evidence:
+  fetched: '2026-08-05'
+  probes:
+  - url: https://checkout.tecovas.com/api/2026-01/graphql.json
+    status: 200
+    note: introspection, 424 types
+  - url: https://www.tecovas.com/api/productdetail/the-earl
+    status: 200
+  - url: https://www.tecovas.com/api/collection-products?search=roper&limit=2
+    status: 200

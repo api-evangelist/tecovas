@@ -1,0 +1,105 @@
+generated: '2026-08-05'
+method: searched
+source: https://checkout.tecovas.com/.well-known/ucp
+note: >-
+  Derived from documents Tecovas actually serves. No compliance program, certification list or
+  trust center was found on any Tecovas host, so no Compliance pointer is claimed.
+standards:
+- id: ucp-2026-04-08
+  name: Universal Commerce Protocol 2026-04-08
+  conforms: true
+  evidence: >-
+    /.well-known/ucp advertises version 2026-04-08 (and 2026-01-23) with dev.ucp.shopping
+    services and the cart/checkout/fulfillment/discount/order/catalog capability set.
+  source: well-known/tecovas-ucp.json
+- id: mcp
+  name: Model Context Protocol (JSON-RPC 2.0 over HTTP)
+  conforms: true
+  evidence: >-
+    POST tools/list to https://checkout.tecovas.com/api/ucp/mcp returned a valid JSON-RPC 2.0
+    result with 13 tools, each carrying a JSON Schema 2020-12 inputSchema.
+  source: mcp/tecovas-ucp-tools-list.json
+- id: rfc9727-api-catalog
+  name: 'RFC 9727 — api-catalog well-known URI'
+  conforms: true
+  evidence: >-
+    /.well-known/api-catalog returns application/linkset+json with four anchored service-doc
+    entries.
+  source: well-known/tecovas-api-catalog.json
+- id: rfc8414-oauth-as-metadata
+  name: 'RFC 8414 — OAuth 2.0 Authorization Server Metadata'
+  conforms: true
+  evidence: /.well-known/oauth-authorization-server returned 200 with issuer, endpoints and JWKS.
+  source: well-known/tecovas-oauth-authorization-server.json
+- id: rfc9728-protected-resource-metadata
+  name: 'RFC 9728 — OAuth 2.0 Protected Resource Metadata'
+  conforms: true
+  evidence: /.well-known/oauth-protected-resource returned 200 with resource + authorization_servers.
+  source: well-known/tecovas-oauth-protected-resource.json
+- id: oauth2
+  conforms: true
+  evidence: authorizationCode grant with PKCE S256, refresh_token, and jwt-bearer grant types.
+- id: oidc
+  name: OpenID Connect
+  conforms: true
+  evidence: openid/email scopes, RS256 id_token signing, nonce/sid claims, end_session_endpoint.
+- id: graphql
+  conforms: true
+  evidence: >-
+    Anonymous introspection at https://checkout.tecovas.com/api/2026-01/graphql.json returned a
+    424-type schema (35 query fields, 41 mutations).
+  source: graphql/tecovas-storefront.graphql
+- id: llmstxt
+  name: llms.txt
+  conforms: true
+  evidence: https://www.tecovas.com/llms.txt returns text/plain in llms.txt format; control path 404s.
+  source: llms/tecovas-llms.txt
+- id: agents-md
+  name: AGENTS.md / agents.md agent instructions
+  conforms: true
+  evidence: agents.md served on both www.tecovas.com and checkout.tecovas.com.
+  source: skills/tecovas-agents.md
+- id: agent-skills-discovery
+  name: cloudflare/agent-skills-discovery-rfc
+  conforms: true
+  evidence: >-
+    /.well-known/agent-skills/index.json declares $schema against the Cloudflare agent-skills
+    discovery RFC and lists 3 skills, each with a sha256 integrity hash.
+  source: well-known/tecovas-agent-skills-index.json
+- id: content-signal
+  name: Content Signals Policy (robots.txt)
+  conforms: true
+  evidence: 'robots.txt declares Content-Signal: search=yes, ai-input=yes, ai-train=yes.'
+  source: well-known/tecovas-robots.txt
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    Error bodies observed on the storefront JSON APIs are plain JSON, not
+    application/problem+json.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: /.well-known/security.txt returned 404 on www.tecovas.com.
+- id: a2a
+  name: A2A Agent Card
+  conforms: false
+  evidence: >-
+    /.well-known/agent-card.json and /.well-known/agent.json returned 404 on both
+    www.tecovas.com and checkout.tecovas.com.
+- id: asyncapi
+  conforms: false
+  evidence: No event, streaming or webhook surface is published on any Tecovas host.
+- id: openapi
+  conforms: false
+  evidence: >-
+    No OpenAPI/Swagger document found. /openapi.json, /openapi.yaml, /swagger.json and
+    /api-docs all 404 on www.tecovas.com; the api-catalog links its four endpoints to
+    llms.txt as their service-doc rather than to a machine-readable spec.
+x-evidence:
+  fetched: '2026-08-05'
+  probes:
+  - {url: 'https://checkout.tecovas.com/.well-known/ucp', status: 200}
+  - {url: 'https://checkout.tecovas.com/api/ucp/mcp', status: 200, note: POST tools/list}
+  - {url: 'https://www.tecovas.com/.well-known/api-catalog', status: 200}
+  - {url: 'https://www.tecovas.com/openapi.json', status: 404}
+  - {url: 'https://www.tecovas.com/.well-known/security.txt', status: 404}
+  - {url: 'https://www.tecovas.com/.well-known/agent-card.json', status: 404}

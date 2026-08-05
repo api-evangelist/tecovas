@@ -1,0 +1,39 @@
+generated: '2026-08-05'
+method: searched
+source: https://checkout.tecovas.com/.well-known/oauth-authorization-server
+note: >-
+  Scopes come from the RFC 8414 authorization-server metadata Tecovas serves from its checkout
+  host for Shopify customer accounts. Tecovas publishes no scope reference page of its own;
+  these are the scopes the issuer advertises as supported. The public read APIs use no scopes.
+schemes:
+- name: shopify-customer-accounts
+  issuer: https://shopify.com/authentication/9910824
+  source: well-known/tecovas-oauth-authorization-server.json
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://accounts.tecovas.com/authentication/oauth/authorize
+    tokenUrl: https://accounts.tecovas.com/authentication/oauth/token
+    pkce: [S256]
+scopes:
+- scope: openid
+  description: OpenID Connect — request an ID token for the signed-in customer.
+  flows: [authorizationCode]
+  sources: [well-known/tecovas-oauth-authorization-server.json]
+- scope: email
+  description: Access the customer's email address and email_verified claim.
+  flows: [authorizationCode]
+  sources: [well-known/tecovas-oauth-authorization-server.json]
+- scope: customer-account-api:full
+  description: Full access to the Shopify Customer Account API on behalf of the signed-in customer.
+  flows: [authorizationCode]
+  sources: [well-known/tecovas-oauth-authorization-server.json]
+- scope: customer-account-mcp-api:full
+  description: >-
+    Full access to the Shopify Customer Account MCP API — the authenticated agent surface for
+    a signed-in customer (orders, profile, addresses).
+  flows: [authorizationCode]
+  sources: [well-known/tecovas-oauth-authorization-server.json]
+x-evidence:
+  fetched: '2026-08-05'
+  url: https://checkout.tecovas.com/.well-known/oauth-authorization-server
+  http_status: 200

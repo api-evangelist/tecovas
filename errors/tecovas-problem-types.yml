@@ -1,0 +1,74 @@
+generated: '2026-08-05'
+method: derived
+source: live probes of the Tecovas storefront JSON API, GraphQL API and UCP MCP endpoint
+format: none
+format_note: >-
+  Tecovas publishes no error reference and no RFC 9457 problem+json. Every entry below is an
+  error shape actually observed on a probe on 2026-08-05, or an error the provider's own
+  documentation names. Nothing here is inferred from a spec, because there is no spec.
+envelopes:
+- surface: storefront-json
+  content_type: application/json
+  shape: plain JSON — no envelope, no error object, no code field
+- surface: storefront-graphql
+  content_type: application/json
+  shape: 'GraphQL errors[] array alongside data; responses also carry extensions.cost'
+- surface: ucp-mcp
+  content_type: application/json
+  shape: 'JSON-RPC 2.0 error {code, message, data:{code, content, continue_url}}'
+problems:
+- surface: storefront-json
+  status: 500
+  title: Unknown product slug returns a server error
+  observed: 'GET https://www.tecovas.com/api/productdetail/mens-the-cartwright -> 500, 12-byte JSON body'
+  remediation: >-
+    Resolve slugs from /api/collection-products before calling /api/productdetail. A 500 here
+    means "no such product", not an outage — the endpoint does not return 404 for a miss.
+- surface: storefront-json
+  status: 200
+  title: Unknown collection slug returns a null collection, not an error
+  observed: 'GET https://www.tecovas.com/api/collection?slug=/mens-boots -> 200 {"collection":null,"seo":{}}'
+  remediation: >-
+    Treat a null collection field as the miss condition. Slugs must be leading-slash route paths
+    (e.g. /shop/boots/roper-boots).
+- surface: storefront-json
+  status: 422
+  title: Unroutable path on the storefront host
+  observed: 'POST https://www.tecovas.com/api/graphql -> 422 text/html'
+  remediation: Only the four endpoints in /.well-known/api-catalog are routable under /api.
+- surface: storefront-json
+  status: 404
+  title: Unknown path
+  observed: 'GET https://www.tecovas.com/.well-known/CONTROL-BOGUS-12345 -> 404 text/html'
+  note: Control probe. Confirms the host does not soft-200 unknown paths.
+- surface: ucp-mcp
+  status: 422
+  jsonrpc_code: -32001
+  title: UCP discovery failed — invalid_profile_url
+  observed: >-
+    POST https://tecovas-3.myshopify.com/api/ucp/mcp method=initialize without
+    meta.ucp-agent.profile -> HTTP 422, {"error":{"code":-32001,"message":"UCP discovery
+    failed","data":{"code":"invalid_profile_url","content":"Unable to fetch agent profile:
+    Missing profile uri"}}}
+  remediation: Supply a resolvable agent profile URI in meta.ucp-agent.profile on every call.
+- surface: ucp-mcp
+  status: 429
+  title: Rate limited
+  documented: true
+  source: https://checkout.tecovas.com/agents.md
+  remediation: >-
+    Provider-documented — "The MCP endpoint is rate-limited per IP. Back off on 429 responses."
+    Not reproduced under probe.
+- surface: ucp-mcp
+  status: 404
+  title: GET on the MCP endpoint
+  observed: 'GET https://checkout.tecovas.com/api/ucp/mcp -> 404 text/html'
+  remediation: The MCP endpoint is POST-only; a GET is not an outage.
+x-evidence:
+  fetched: '2026-08-05'
+  probes:
+  - {url: 'https://www.tecovas.com/api/productdetail/mens-the-cartwright', status: 500}
+  - {url: 'https://www.tecovas.com/api/collection?slug=/mens-boots', status: 200}
+  - {url: 'https://www.tecovas.com/api/graphql', status: 422}
+  - {url: 'https://checkout.tecovas.com/api/ucp/mcp', status: 404, note: 'GET; POST returns 200'}
+  - {url: 'https://tecovas-3.myshopify.com/api/ucp/mcp', status: 422, note: 'initialize without agent profile'}
