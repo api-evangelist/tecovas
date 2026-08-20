@@ -41,6 +41,11 @@ apis:
   humanURL: https://www.tecovas.com/agents.md
   baseURL: https://www.tecovas.com/api
   tags:
+  - Product
+  - Collection
+  - Search
+  - Catalog
+  tags_raw:
   - Products
   - Collections
   - Search
@@ -62,6 +67,11 @@ apis:
   baseURL: https://checkout.tecovas.com/api/2026-01/graphql.json
   tags:
   - GraphQL
+  - Product
+  - Cart
+  - Shopify
+  tags_raw:
+  - GraphQL
   - Products
   - Cart
   - Shopify
@@ -80,6 +90,12 @@ apis:
   humanURL: https://checkout.tecovas.com/agents.md
   baseURL: https://checkout.tecovas.com/api/ucp/mcp
   tags:
+  - MCP
+  - Agentic Commerce
+  - Checkout
+  - Cart
+  - Order
+  tags_raw:
   - MCP
   - Agentic Commerce
   - Checkout
