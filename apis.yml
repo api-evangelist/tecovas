@@ -9,6 +9,17 @@ description: 'Tecovas is an Austin, Texas direct-to-consumer Western wear brand 
   introspectable Shopify Storefront GraphQL API, and a Universal Commerce Protocol (UCP) MCP endpoint
   on its Shopify checkout host for agent-driven cart and checkout.'
 url: https://raw.githubusercontent.com/api-evangelist/tecovas/refs/heads/main/apis.yml
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://cdn.sanity.io/images/v8kybopt/production/073bf9cd1134041e2c334a569e22504347e336eb-8108x5289.jpg?auto=format&fit=max&w=1200
 x-type: company
 x-source: harvest:secondary-market
