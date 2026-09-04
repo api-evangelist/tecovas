@@ -20,6 +20,20 @@ deliveryModel:
   - pricing
   generated: '2026-08-28'
   method: derived
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  - scopes
+  - security
+  generated: '2026-09-02'
+  method: derived
 image: https://cdn.sanity.io/images/v8kybopt/production/073bf9cd1134041e2c334a569e22504347e336eb-8108x5289.jpg?auto=format&fit=max&w=1200
 x-type: company
 x-source: harvest:secondary-market
