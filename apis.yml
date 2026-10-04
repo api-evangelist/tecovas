@@ -105,6 +105,9 @@ apis:
     url: graphql/tecovas-storefront.graphql
   - type: Documentation
     url: https://checkout.tecovas.com/agents.md
+  x-surface: platform-generated
+  x-platform: shopify
+  x-platform-surface: storefront-graphql
 - aid: tecovas:tecovas-ucp-agentic-commerce
   name: Tecovas Agentic Commerce (UCP/MCP)
   description: 'Tecovas implements the Universal Commerce Protocol 2026-04-08 on its Shopify checkout
@@ -133,6 +136,9 @@ apis:
     url: mcp/tecovas-tool-crosswalk.yml
   - type: Documentation
     url: https://checkout.tecovas.com/agents.md
+  x-surface: platform-generated
+  x-platform: shopify
+  x-platform-surface: ucp
 common:
 - type: Website
   url: https://www.tecovas.com/
